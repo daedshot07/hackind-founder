@@ -1,64 +1,87 @@
-/**
- * Export lib/mongoose
- *
- */
+"use strict";
 
-'use strict';
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.createConfigItem = createConfigItem;
+exports.createConfigItemAsync = createConfigItemAsync;
+exports.createConfigItemSync = createConfigItemSync;
+Object.defineProperty(exports, "default", {
+  enumerable: true,
+  get: function () {
+    return _full.default;
+  }
+});
+exports.loadOptions = loadOptions;
+exports.loadOptionsAsync = loadOptionsAsync;
+exports.loadOptionsSync = loadOptionsSync;
+exports.loadPartialConfig = loadPartialConfig;
+exports.loadPartialConfigAsync = loadPartialConfigAsync;
+exports.loadPartialConfigSync = loadPartialConfigSync;
+function _gensync() {
+  const data = require("gensync");
+  _gensync = function () {
+    return data;
+  };
+  return data;
+}
+var _full = require("./full.js");
+var _partial = require("./partial.js");
+var _item = require("./item.js");
+var _rewriteStackTrace = require("../errors/rewrite-stack-trace.js");
+const loadPartialConfigRunner = _gensync()(_partial.loadPartialConfig);
+function loadPartialConfigAsync(...args) {
+  return (0, _rewriteStackTrace.beginHiddenCallStack)(loadPartialConfigRunner.async)(...args);
+}
+function loadPartialConfigSync(...args) {
+  return (0, _rewriteStackTrace.beginHiddenCallStack)(loadPartialConfigRunner.sync)(...args);
+}
+function loadPartialConfig(opts, callback) {
+  if (callback !== undefined) {
+    (0, _rewriteStackTrace.beginHiddenCallStack)(loadPartialConfigRunner.errback)(opts, callback);
+  } else if (typeof opts === "function") {
+    (0, _rewriteStackTrace.beginHiddenCallStack)(loadPartialConfigRunner.errback)(undefined, opts);
+  } else {
+    return loadPartialConfigSync(opts);
+  }
+}
+function* loadOptionsImpl(opts) {
+  var _config$options;
+  const config = yield* (0, _full.default)(opts);
+  return (_config$options = config == null ? void 0 : config.options) != null ? _config$options : null;
+}
+const loadOptionsRunner = _gensync()(loadOptionsImpl);
+function loadOptionsAsync(...args) {
+  return (0, _rewriteStackTrace.beginHiddenCallStack)(loadOptionsRunner.async)(...args);
+}
+function loadOptionsSync(...args) {
+  return (0, _rewriteStackTrace.beginHiddenCallStack)(loadOptionsRunner.sync)(...args);
+}
+function loadOptions(opts, callback) {
+  if (callback !== undefined) {
+    (0, _rewriteStackTrace.beginHiddenCallStack)(loadOptionsRunner.errback)(opts, callback);
+  } else if (typeof opts === "function") {
+    (0, _rewriteStackTrace.beginHiddenCallStack)(loadOptionsRunner.errback)(undefined, opts);
+  } else {
+    return loadOptionsSync(opts);
+  }
+}
+const createConfigItemRunner = _gensync()(_item.createConfigItem);
+function createConfigItemAsync(...args) {
+  return (0, _rewriteStackTrace.beginHiddenCallStack)(createConfigItemRunner.async)(...args);
+}
+function createConfigItemSync(...args) {
+  return (0, _rewriteStackTrace.beginHiddenCallStack)(createConfigItemRunner.sync)(...args);
+}
+function createConfigItem(target, options, callback) {
+  if (callback !== undefined) {
+    (0, _rewriteStackTrace.beginHiddenCallStack)(createConfigItemRunner.errback)(target, options, callback);
+  } else if (typeof options === "function") {
+    (0, _rewriteStackTrace.beginHiddenCallStack)(createConfigItemRunner.errback)(target, undefined, callback);
+  } else {
+    return createConfigItemSync(target, options);
+  }
+}
+0 && 0;
 
-const mongoose = require('./lib/');
-
-module.exports = mongoose;
-module.exports.default = mongoose;
-module.exports.mongoose = mongoose;
-
-// Re-export for ESM support
-module.exports.cast = mongoose.cast;
-module.exports.STATES = mongoose.STATES;
-module.exports.setDriver = mongoose.setDriver;
-module.exports.set = mongoose.set;
-module.exports.get = mongoose.get;
-module.exports.createConnection = mongoose.createConnection;
-module.exports.connect = mongoose.connect;
-module.exports.disconnect = mongoose.disconnect;
-module.exports.startSession = mongoose.startSession;
-module.exports.pluralize = mongoose.pluralize;
-module.exports.model = mongoose.model;
-module.exports.deleteModel = mongoose.deleteModel;
-module.exports.modelNames = mongoose.modelNames;
-module.exports.plugin = mongoose.plugin;
-module.exports.connections = mongoose.connections;
-module.exports.version = mongoose.version;
-module.exports.Aggregate = mongoose.Aggregate;
-module.exports.Mongoose = mongoose.Mongoose;
-module.exports.Schema = mongoose.Schema;
-module.exports.SchemaType = mongoose.SchemaType;
-module.exports.SchemaTypes = mongoose.SchemaTypes;
-module.exports.VirtualType = mongoose.VirtualType;
-module.exports.Types = mongoose.Types;
-module.exports.Query = mongoose.Query;
-module.exports.Model = mongoose.Model;
-module.exports.Document = mongoose.Document;
-module.exports.ObjectId = mongoose.ObjectId;
-module.exports.isValidObjectId = mongoose.isValidObjectId;
-module.exports.isObjectIdOrHexString = mongoose.isObjectIdOrHexString;
-module.exports.syncIndexes = mongoose.syncIndexes;
-module.exports.Decimal128 = mongoose.Decimal128;
-module.exports.Mixed = mongoose.Mixed;
-module.exports.Date = mongoose.Date;
-module.exports.Number = mongoose.Number;
-module.exports.Error = mongoose.Error;
-module.exports.MongooseError = mongoose.MongooseError;
-module.exports.now = mongoose.now;
-module.exports.CastError = mongoose.CastError;
-module.exports.SchemaTypeOptions = mongoose.SchemaTypeOptions;
-module.exports.mongo = mongoose.mongo;
-module.exports.mquery = mongoose.mquery;
-module.exports.sanitizeFilter = mongoose.sanitizeFilter;
-module.exports.trusted = mongoose.trusted;
-module.exports.skipMiddlewareFunction = mongoose.skipMiddlewareFunction;
-module.exports.overwriteMiddlewareResult = mongoose.overwriteMiddlewareResult;
-
-// The following properties are not exported using ESM because `setDriver()` can mutate these
-// module.exports.connection = mongoose.connection;
-// module.exports.Collection = mongoose.Collection;
-// module.exports.Connection = mongoose.Connection;
+//# sourceMappingURL=index.js.map
