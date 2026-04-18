@@ -1,19 +1,19 @@
-# @babel/traverse
+# @babel/helpers
 
-> The Babel Traverse module maintains the overall tree state, and is responsible for replacing, removing, and adding nodes
+> Collection of helper functions used by Babel transforms.
 
-See our website [@babel/traverse](https://babeljs.io/docs/babel-traverse) for more information or the [issues](https://github.com/babel/babel/issues?utf8=%E2%9C%93&q=is%3Aissue+label%3A%22pkg%3A%20traverse%22+is%3Aopen) associated with this package.
+See our website [@babel/helpers](https://babeljs.io/docs/babel-helpers) for more information.
 
 ## Install
 
 Using npm:
 
 ```sh
-npm install --save-dev @babel/traverse
+npm install --save-dev @babel/helpers
 ```
 
 or using yarn:
 
 ```sh
-yarn add @babel/traverse --dev
+yarn add @babel/helpers --dev
 ```
