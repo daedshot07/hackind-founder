@@ -1,156 +1,356 @@
-## Pure JS character encoding conversion [![Build Status](https://travis-ci.org/ashtuchkin/iconv-lite.svg?branch=master)](https://travis-ci.org/ashtuchkin/iconv-lite)
+# MongoDB Node.js Driver
 
- * Doesn't need native code compilation. Works on Windows and in sandboxed environments like [Cloud9](http://c9.io).
- * Used in popular projects like [Express.js (body_parser)](https://github.com/expressjs/body-parser), 
-   [Grunt](http://gruntjs.com/), [Nodemailer](http://www.nodemailer.com/), [Yeoman](http://yeoman.io/) and others.
- * Faster than [node-iconv](https://github.com/bnoordhuis/node-iconv) (see below for performance comparison).
- * Intuitive encode/decode API
- * Streaming support for Node v0.10+
- * [Deprecated] Can extend Node.js primitives (buffers, streams) to support all iconv-lite encodings.
- * In-browser usage via [Browserify](https://github.com/substack/node-browserify) (~180k gzip compressed with Buffer shim included).
- * Typescript [type definition file](https://github.com/ashtuchkin/iconv-lite/blob/master/lib/index.d.ts) included.
- * React Native is supported (need to explicitly `npm install` two more modules: `buffer` and `stream`).
- * License: MIT.
+The official [MongoDB](https://www.mongodb.com/) driver for Node.js.
 
-[![NPM Stats](https://nodei.co/npm/iconv-lite.png?downloads=true&downloadRank=true)](https://npmjs.org/packages/iconv-lite/)
+**Upgrading to version 6? Take a look at our [upgrade guide here](https://github.com/mongodb/node-mongodb-native/blob/HEAD/etc/notes/CHANGES_6.0.0.md)!**
 
-## Usage
-### Basic API
-```javascript
-var iconv = require('iconv-lite');
+## Quick Links
 
-// Convert from an encoded buffer to js string.
-str = iconv.decode(Buffer.from([0x68, 0x65, 0x6c, 0x6c, 0x6f]), 'win1251');
+| Site                     | Link                                                                                                                                  |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------- |
+| Documentation            | [www.mongodb.com/docs/drivers/node](https://www.mongodb.com/docs/drivers/node)                                                        |
+| API Docs                 | [mongodb.github.io/node-mongodb-native](https://mongodb.github.io/node-mongodb-native)                                                |
+| `npm` package            | [www.npmjs.com/package/mongodb](https://www.npmjs.com/package/mongodb)                                                                |
+| MongoDB                  | [www.mongodb.com](https://www.mongodb.com)                                                                                            |
+| MongoDB University       | [learn.mongodb.com](https://learn.mongodb.com/catalog?labels=%5B%22Language%22%5D&values=%5B%22Node.js%22%5D)                         |
+| MongoDB Developer Center | [www.mongodb.com/developer](https://www.mongodb.com/developer/languages/javascript/)                                                  |
+| Stack Overflow           | [stackoverflow.com](https://stackoverflow.com/search?q=%28%5Btypescript%5D+or+%5Bjavascript%5D+or+%5Bnode.js%5D%29+and+%5Bmongodb%5D) |
+| Source Code              | [github.com/mongodb/node-mongodb-native](https://github.com/mongodb/node-mongodb-native)                                              |
+| Upgrade to v6            | [etc/notes/CHANGES_6.0.0.md](https://github.com/mongodb/node-mongodb-native/blob/HEAD/etc/notes/CHANGES_6.0.0.md)                     |
+| Contributing             | [CONTRIBUTING.md](https://github.com/mongodb/node-mongodb-native/blob/HEAD/CONTRIBUTING.md)                                           |
+| Changelog                | [HISTORY.md](https://github.com/mongodb/node-mongodb-native/blob/HEAD/HISTORY.md)                                                     |
 
-// Convert from js string to an encoded buffer.
-buf = iconv.encode("Sample input string", 'win1251');
 
-// Check if encoding is supported
-iconv.encodingExists("us-ascii")
+
+### Release Integrity
+
+Releases are created automatically and signed using the [Node team's GPG key](https://pgp.mongodb.com/node-driver.asc). This applies to the git tag as well as all release packages provided as part of a GitHub release. To verify the provided packages, download the key and import it using gpg:
+
+```shell
+gpg --import node-driver.asc
 ```
 
-### Streaming API (Node v0.10+)
-```javascript
+The GitHub release contains a detached signature file for the NPM package (named
+`mongodb-X.Y.Z.tgz.sig`).
 
-// Decode stream (from binary stream to js strings)
-http.createServer(function(req, res) {
-    var converterStream = iconv.decodeStream('win1251');
-    req.pipe(converterStream);
-
-    converterStream.on('data', function(str) {
-        console.log(str); // Do something with decoded strings, chunk-by-chunk.
-    });
-});
-
-// Convert encoding streaming example
-fs.createReadStream('file-in-win1251.txt')
-    .pipe(iconv.decodeStream('win1251'))
-    .pipe(iconv.encodeStream('ucs2'))
-    .pipe(fs.createWriteStream('file-in-ucs2.txt'));
-
-// Sugar: all encode/decode streams have .collect(cb) method to accumulate data.
-http.createServer(function(req, res) {
-    req.pipe(iconv.decodeStream('win1251')).collect(function(err, body) {
-        assert(typeof body == 'string');
-        console.log(body); // full request body string
-    });
-});
+The following command returns the link npm package.
+```shell
+npm view mongodb@vX.Y.Z dist.tarball
 ```
 
-### [Deprecated] Extend Node.js own encodings
-> NOTE: This doesn't work on latest Node versions. See [details](https://github.com/ashtuchkin/iconv-lite/wiki/Node-v4-compatibility).
+Using the result of the above command, a `curl` command can return the official npm package for the release.
 
-```javascript
-// After this call all Node basic primitives will understand iconv-lite encodings.
-iconv.extendNodeEncodings();
-
-// Examples:
-buf = new Buffer(str, 'win1251');
-buf.write(str, 'gbk');
-str = buf.toString('latin1');
-assert(Buffer.isEncoding('iso-8859-15'));
-Buffer.byteLength(str, 'us-ascii');
-
-http.createServer(function(req, res) {
-    req.setEncoding('big5');
-    req.collect(function(err, body) {
-        console.log(body);
-    });
-});
-
-fs.createReadStream("file.txt", "shift_jis");
-
-// External modules are also supported (if they use Node primitives, which they probably do).
-request = require('request');
-request({
-    url: "http://github.com/", 
-    encoding: "cp932"
-});
-
-// To remove extensions
-iconv.undoExtendNodeEncodings();
+To verify the integrity of the downloaded package, run the following command:
+```shell
+gpg --verify mongodb-X.Y.Z.tgz.sig mongodb-X.Y.Z.tgz
 ```
 
-## Supported encodings
+>[!Note]
+No verification is done when using npm to install the package. The contents of the Github tarball and npm's tarball are identical.
 
- *  All node.js native encodings: utf8, ucs2 / utf16-le, ascii, binary, base64, hex.
- *  Additional unicode encodings: utf16, utf16-be, utf-7, utf-7-imap.
- *  All widespread singlebyte encodings: Windows 125x family, ISO-8859 family, 
-    IBM/DOS codepages, Macintosh family, KOI8 family, all others supported by iconv library. 
-    Aliases like 'latin1', 'us-ascii' also supported.
- *  All widespread multibyte encodings: CP932, CP936, CP949, CP950, GB2312, GBK, GB18030, Big5, Shift_JIS, EUC-JP.
+The MongoDB Node.js driver follows [semantic versioning](https://semver.org/) for its releases.
 
-See [all supported encodings on wiki](https://github.com/ashtuchkin/iconv-lite/wiki/Supported-Encodings).
+### Bugs / Feature Requests
 
-Most singlebyte encodings are generated automatically from [node-iconv](https://github.com/bnoordhuis/node-iconv). Thank you Ben Noordhuis and libiconv authors!
+Think you’ve found a bug? Want to see a new feature in `node-mongodb-native`? Please open a
+case in our issue management tool, JIRA:
 
-Multibyte encodings are generated from [Unicode.org mappings](http://www.unicode.org/Public/MAPPINGS/) and [WHATWG Encoding Standard mappings](http://encoding.spec.whatwg.org/). Thank you, respective authors!
+- Create an account and login [jira.mongodb.org](https://jira.mongodb.org).
+- Navigate to the NODE project [jira.mongodb.org/browse/NODE](https://jira.mongodb.org/browse/NODE).
+- Click **Create Issue** - Please provide as much information as possible about the issue type and how to reproduce it.
+
+Bug reports in JIRA for all driver projects (i.e. NODE, PYTHON, CSHARP, JAVA) and the
+Core Server (i.e. SERVER) project are **public**.
+
+### Support / Feedback
+
+For issues with, questions about, or feedback for the Node.js driver, please look into our [support channels](https://www.mongodb.com/docs/manual/support). Please do not email any of the driver developers directly with issues or questions - you're more likely to get an answer on the [MongoDB Community Forums](https://community.mongodb.com/tags/c/drivers-odms-connectors/7/node-js-driver).
+
+### Change Log
+
+Change history can be found in [`HISTORY.md`](https://github.com/mongodb/node-mongodb-native/blob/HEAD/HISTORY.md).
+
+### Compatibility
+
+The driver currently supports 4.2+ servers.
+
+For exhaustive server and runtime version compatibility matrices, please refer to the following links:
+
+- [MongoDB](https://www.mongodb.com/docs/drivers/node/current/compatibility/#mongodb-compatibility)
+- [NodeJS](https://www.mongodb.com/docs/drivers/node/current/compatibility/#language-compatibility)
+
+#### Component Support Matrix
+
+The following table describes add-on component version compatibility for the Node.js driver. Only packages with versions in these supported ranges are stable when used in combination.
+
+| Component                                                                            | `mongodb@3.x`      | `mongodb@4.x`      | `mongodb@5.x`      | `mongodb@<6.12` | `mongodb@>=6.12`   |
+| ------------------------------------------------------------------------------------ | ------------------ | ------------------ | ------------------ | --------------- | ------------------ |
+| [bson](https://www.npmjs.com/package/bson)                                           | ^1.0.0             | ^4.0.0             | ^5.0.0             | ^6.0.0          | ^6.0.0             |
+| [bson-ext](https://www.npmjs.com/package/bson-ext)                                   | ^1.0.0 \|\| ^2.0.0 | ^4.0.0             | N/A                | N/A             | N/A                |
+| [kerberos](https://www.npmjs.com/package/kerberos)                                   | ^1.0.0             | ^1.0.0 \|\| ^2.0.0 | ^1.0.0 \|\| ^2.0.0 | ^2.0.1          | ^2.0.1             |
+| [mongodb-client-encryption](https://www.npmjs.com/package/mongodb-client-encryption) | ^1.0.0             | ^1.0.0 \|\| ^2.0.0 | ^2.3.0             | ^6.0.0          | ^6.0.0             |
+| [mongodb-legacy](https://www.npmjs.com/package/mongodb-legacy)                       | N/A                | ^4.0.0             | ^5.0.0             | ^6.0.0          | ^6.0.0             |
+| [@mongodb-js/zstd](https://www.npmjs.com/package/@mongodb-js/zstd)                   | N/A                | ^1.0.0             | ^1.0.0             | ^1.1.0          | ^1.1.0 \|\| ^2.0.0 |
 
 
-## Encoding/decoding speed
+#### Typescript Version
 
-Comparison with node-iconv module (1000x256kb, on MacBook Pro, Core i5/2.6 GHz, Node v0.12.0). 
-Note: your results may vary, so please always check on your hardware.
+We recommend using the latest version of typescript, however we currently ensure the driver's public types compile against `typescript@4.4.0`.
+This is the lowest typescript version guaranteed to work with our driver: older versions may or may not work - use at your own risk.
+Since typescript [does not restrict breaking changes to major versions](https://github.com/Microsoft/TypeScript/wiki/Breaking-Changes), we consider this support best effort.
+If you run into any unexpected compiler failures against our supported TypeScript versions, please let us know by filing an issue on our [JIRA](https://jira.mongodb.org/browse/NODE).
 
-    operation             iconv@2.1.4   iconv-lite@0.4.7
-    ----------------------------------------------------------
-    encode('win1251')     ~96 Mb/s      ~320 Mb/s
-    decode('win1251')     ~95 Mb/s      ~246 Mb/s
+Additionally, our Typescript types are compatible with the ECMAScript standard for our minimum supported Node version.  Currently, our Typescript targets es2021.
 
-## BOM handling
+## Installation
 
- * Decoding: BOM is stripped by default, unless overridden by passing `stripBOM: false` in options
-   (f.ex. `iconv.decode(buf, enc, {stripBOM: false})`).
-   A callback might also be given as a `stripBOM` parameter - it'll be called if BOM character was actually found.
- * If you want to detect UTF-8 BOM when decoding other encodings, use [node-autodetect-decoder-stream](https://github.com/danielgindi/node-autodetect-decoder-stream) module.
- * Encoding: No BOM added, unless overridden by `addBOM: true` option.
+The recommended way to get started using the Node.js 5.x driver is by using the `npm` (Node Package Manager) to install the dependency in your project.
 
-## UTF-16 Encodings
-
-This library supports UTF-16LE, UTF-16BE and UTF-16 encodings. First two are straightforward, but UTF-16 is trying to be
-smart about endianness in the following ways:
- * Decoding: uses BOM and 'spaces heuristic' to determine input endianness. Default is UTF-16LE, but can be 
-   overridden with `defaultEncoding: 'utf-16be'` option. Strips BOM unless `stripBOM: false`.
- * Encoding: uses UTF-16LE and writes BOM by default. Use `addBOM: false` to override.
-
-## Other notes
-
-When decoding, be sure to supply a Buffer to decode() method, otherwise [bad things usually happen](https://github.com/ashtuchkin/iconv-lite/wiki/Use-Buffers-when-decoding).  
-Untranslatable characters are set to � or ?. No transliteration is currently supported.  
-Node versions 0.10.31 and 0.11.13 are buggy, don't use them (see #65, #77).  
-
-## Testing
+After you've created your own project using `npm init`, you can run:
 
 ```bash
-$ git clone git@github.com:ashtuchkin/iconv-lite.git
-$ cd iconv-lite
-$ npm install
-$ npm test
-    
-$ # To view performance:
-$ node test/performance.js
-
-$ # To view test coverage:
-$ npm run coverage
-$ open coverage/lcov-report/index.html
+npm install mongodb
 ```
+
+This will download the MongoDB driver and add a dependency entry in your `package.json` file.
+
+If you are a Typescript user, you will need the Node.js type definitions to use the driver's definitions:
+
+```sh
+npm install -D @types/node
+```
+
+## Driver Extensions
+
+The MongoDB driver can optionally be enhanced by the following feature packages:
+
+Maintained by MongoDB:
+
+- Zstd network compression - [@mongodb-js/zstd](https://github.com/mongodb-js/zstd)
+- MongoDB field level and queryable encryption - [mongodb-client-encryption](https://github.com/mongodb/libmongocrypt#readme)
+- GSSAPI / SSPI / Kerberos authentication - [kerberos](https://github.com/mongodb-js/kerberos)
+
+Some of these packages include native C++ extensions.
+Consult the [trouble shooting guide here](https://github.com/mongodb/node-mongodb-native/blob/HEAD/etc/notes/native-extensions.md) if you run into compilation issues.
+
+Third party:
+
+- Snappy network compression - [snappy](https://github.com/Brooooooklyn/snappy)
+- AWS authentication - [@aws-sdk/credential-providers](https://github.com/aws/aws-sdk-js-v3/tree/main/packages/credential-providers)
+
+## Quick Start
+
+This guide will show you how to set up a simple application using Node.js and MongoDB. Its scope is only how to set up the driver and perform the simple CRUD operations. For more in-depth coverage, see the [official documentation](https://www.mongodb.com/docs/drivers/node/).
+
+### Create the `package.json` file
+
+First, create a directory where your application will live.
+
+```bash
+mkdir myProject
+cd myProject
+```
+
+Enter the following command and answer the questions to create the initial structure for your new project:
+
+```bash
+npm init -y
+```
+
+Next, install the driver as a dependency.
+
+```bash
+npm install mongodb
+```
+
+### Start a MongoDB Server
+
+For complete MongoDB installation instructions, see [the manual](https://www.mongodb.com/docs/manual/installation/).
+
+1. Download the right MongoDB version from [MongoDB](https://www.mongodb.org/downloads)
+2. Create a database directory (in this case under **/data**).
+3. Install and start a `mongod` process.
+
+```bash
+mongod --dbpath=/data
+```
+
+You should see the **mongod** process start up and print some status information.
+
+### Connect to MongoDB
+
+Create a new **app.js** file and add the following code to try out some basic CRUD
+operations using the MongoDB driver.
+
+Add code to connect to the server and the database **myProject**:
+
+> **NOTE:** Resolving DNS Connection issues
+>
+> Node.js 18 changed the default DNS resolution ordering from always prioritizing IPv4 to the ordering
+> returned by the DNS provider. In some environments, this can result in `localhost` resolving to
+> an IPv6 address instead of IPv4 and a consequent failure to connect to the server.
+>
+> This can be resolved by:
+>
+> - specifying the IP address family using the MongoClient `family` option (`MongoClient(<uri>, { family: 4 } )`)
+> - launching mongod or mongos with the ipv6 flag enabled ([--ipv6 mongod option documentation](https://www.mongodb.com/docs/manual/reference/program/mongod/#std-option-mongod.--ipv6))
+> - using a host of `127.0.0.1` in place of localhost
+> - specifying the DNS resolution ordering with the `--dns-resolution-order` Node.js command line argument (e.g. `node --dns-resolution-order=ipv4first`)
+
+```js
+const { MongoClient } = require('mongodb');
+// or as an es module:
+// import { MongoClient } from 'mongodb'
+
+// Connection URL
+const url = 'mongodb://localhost:27017';
+const client = new MongoClient(url);
+
+// Database Name
+const dbName = 'myProject';
+
+async function main() {
+  // Use connect method to connect to the server
+  await client.connect();
+  console.log('Connected successfully to server');
+  const db = client.db(dbName);
+  const collection = db.collection('documents');
+
+  // the following code examples can be pasted here...
+
+  return 'done.';
+}
+
+main()
+  .then(console.log)
+  .catch(console.error)
+  .finally(() => client.close());
+```
+
+Run your app from the command line with:
+
+```bash
+node app.js
+```
+
+The application should print **Connected successfully to server** to the console.
+
+### Insert a Document
+
+Add to **app.js** the following function which uses the **insertMany**
+method to add three documents to the **documents** collection.
+
+```js
+const insertResult = await collection.insertMany([{ a: 1 }, { a: 2 }, { a: 3 }]);
+console.log('Inserted documents =>', insertResult);
+```
+
+The **insertMany** command returns an object with information about the insert operations.
+
+### Find All Documents
+
+Add a query that returns all the documents.
+
+```js
+const findResult = await collection.find({}).toArray();
+console.log('Found documents =>', findResult);
+```
+
+This query returns all the documents in the **documents** collection.
+If you add this below the insertMany example, you'll see the documents you've inserted.
+
+### Find Documents with a Query Filter
+
+Add a query filter to find only documents which meet the query criteria.
+
+```js
+const filteredDocs = await collection.find({ a: 3 }).toArray();
+console.log('Found documents filtered by { a: 3 } =>', filteredDocs);
+```
+
+Only the documents which match `'a' : 3` should be returned.
+
+### Update a document
+
+The following operation updates a document in the **documents** collection.
+
+```js
+const updateResult = await collection.updateOne({ a: 3 }, { $set: { b: 1 } });
+console.log('Updated documents =>', updateResult);
+```
+
+The method updates the first document where the field **a** is equal to **3** by adding a new field **b** to the document set to **1**. `updateResult` contains information about whether there was a matching document to update or not.
+
+### Remove a document
+
+Remove the document where the field **a** is equal to **3**.
+
+```js
+const deleteResult = await collection.deleteMany({ a: 3 });
+console.log('Deleted documents =>', deleteResult);
+```
+
+### Index a Collection
+
+[Indexes](https://www.mongodb.com/docs/manual/indexes/) can improve your application's
+performance. The following function creates an index on the **a** field in the
+**documents** collection.
+
+```js
+const indexName = await collection.createIndex({ a: 1 });
+console.log('index name =', indexName);
+```
+
+For more detailed information, see the [indexing strategies page](https://www.mongodb.com/docs/manual/applications/indexes/).
+
+## Error Handling
+
+If you need to filter certain errors from our driver, we have a helpful tree of errors described in [etc/notes/errors.md](https://github.com/mongodb/node-mongodb-native/blob/HEAD/etc/notes/errors.md).
+
+It is our recommendation to use `instanceof` checks on errors and to avoid relying on parsing `error.message` and `error.name` strings in your code.
+We guarantee `instanceof` checks will pass according to semver guidelines, but errors may be sub-classed or their messages may change at any time, even patch releases, as we see fit to increase the helpfulness of the errors.
+
+Any new errors we add to the driver will directly extend an existing error class and no existing error will be moved to a different parent class outside of a major release.
+This means `instanceof` will always be able to accurately capture the errors that our driver throws.
+
+```typescript
+const client = new MongoClient(url);
+await client.connect();
+const collection = client.db().collection('collection');
+
+try {
+  await collection.insertOne({ _id: 1 });
+  await collection.insertOne({ _id: 1 }); // duplicate key error
+} catch (error) {
+  if (error instanceof MongoServerError) {
+    console.log(`Error worth logging: ${error}`); // special case for some reason
+  }
+  throw error; // still want to crash
+}
+```
+
+## Nightly releases
+
+If you need to test with a change from the latest `main` branch, our `mongodb` npm package has nightly versions released under the `nightly` tag.
+
+```sh
+npm install mongodb@nightly
+```
+
+Nightly versions are published regardless of testing outcome.
+This means there could be semantic breakages or partially implemented features.
+The nightly build is not suitable for production use.
+
+## Next Steps
+
+- [MongoDB Documentation](https://www.mongodb.com/docs/manual/)
+- [MongoDB Node Driver Documentation](https://www.mongodb.com/docs/drivers/node/)
+- [Read about Schemas](https://www.mongodb.com/docs/manual/core/data-modeling-introduction/)
+- [Star us on GitHub](https://github.com/mongodb/node-mongodb-native)
+
+## License
+
+[Apache 2.0](LICENSE.md)
+
+© 2012-present MongoDB [Contributors](https://github.com/mongodb/node-mongodb-native/blob/HEAD/CONTRIBUTORS.md) \
+© 2009-2012 Christian Amor Kvalheim
