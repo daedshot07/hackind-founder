@@ -1,32 +1,58 @@
 {
-  "name": "@babel/helper-module-transforms",
-  "version": "7.28.6",
-  "description": "Babel helper functions for implementing ES6 module transformations",
-  "author": "The Babel Team (https://babel.dev/team)",
-  "homepage": "https://babel.dev/docs/en/next/babel-helper-module-transforms",
-  "license": "MIT",
-  "publishConfig": {
-    "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/babel/babel.git",
-    "directory": "packages/babel-helper-module-transforms"
-  },
-  "main": "./lib/index.js",
-  "dependencies": {
-    "@babel/helper-module-imports": "^7.28.6",
-    "@babel/helper-validator-identifier": "^7.28.5",
-    "@babel/traverse": "^7.28.6"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.28.6"
-  },
-  "peerDependencies": {
-    "@babel/core": "^7.0.0"
-  },
-  "engines": {
-    "node": ">=6.9.0"
-  },
-  "type": "commonjs"
+	"name": "globals",
+	"version": "14.0.0",
+	"description": "Global identifiers from different JavaScript environments",
+	"license": "MIT",
+	"repository": "sindresorhus/globals",
+	"funding": "https://github.com/sponsors/sindresorhus",
+	"author": {
+		"name": "Sindre Sorhus",
+		"email": "sindresorhus@gmail.com",
+		"url": "https://sindresorhus.com"
+	},
+	"sideEffects": false,
+	"engines": {
+		"node": ">=18"
+	},
+	"scripts": {
+		"test": "xo && ava && tsd",
+		"prepare": "npm run --silent update-types",
+		"update-builtin-globals": "node scripts/get-builtin-globals.mjs",
+		"update-types": "node scripts/generate-types.mjs > index.d.ts"
+	},
+	"files": [
+		"index.js",
+		"index.d.ts",
+		"globals.json"
+	],
+	"keywords": [
+		"globals",
+		"global",
+		"identifiers",
+		"variables",
+		"vars",
+		"jshint",
+		"eslint",
+		"environments"
+	],
+	"devDependencies": {
+		"ava": "^2.4.0",
+		"cheerio": "^1.0.0-rc.12",
+		"tsd": "^0.30.4",
+		"type-fest": "^4.10.2",
+		"xo": "^0.36.1"
+	},
+	"xo": {
+		"ignores": [
+			"get-browser-globals.js"
+		],
+		"rules": {
+			"node/no-unsupported-features/es-syntax": "off"
+		}
+	},
+	"tsd": {
+		"compilerOptions": {
+			"resolveJsonModule": true
+		}
+	}
 }
