@@ -1,44 +1,33 @@
-# globals
+<img src="images/immer-logo.svg" height="200px" align="right"/>
 
-> Global identifiers from different JavaScript environments
+# Immer
 
-It's just a [JSON file](globals.json), so use it in any environment.
+[![npm](https://img.shields.io/npm/v/immer.svg)](https://www.npmjs.com/package/immer) [![Build Status](https://github.com/immerjs/immer/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/immerjs/immer/actions?query=branch%3Amain) [![Coverage Status](https://coveralls.io/repos/github/immerjs/immer/badge.svg?branch=main)](https://coveralls.io/github/immerjs/immer?branch=main) [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier) [![OpenCollective](https://opencollective.com/immer/backers/badge.svg)](#backers) [![OpenCollective](https://opencollective.com/immer/sponsors/badge.svg)](#sponsors) [![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/immerjs/immer)
 
-This package is used by ESLint.
+_Create the next immutable state tree by simply modifying the current tree_
 
-**This package [no longer accepts](https://github.com/sindresorhus/globals/issues/82) new environments. If you need it for ESLint, just [create a plugin](http://eslint.org/docs/developer-guide/working-with-plugins#environments-in-plugins).**
+Winner of the "Breakthrough of the year" [React open source award](https://osawards.com/react/) and "Most impactful contribution" [JavaScript open source award](https://osawards.com/javascript/) in 2019
 
-## Install
+## Contribute using one-click online setup
 
-```sh
-npm install globals
-```
+You can use Gitpod (a free online VSCode like IDE) for contributing online. With a single click it will launch a workspace and automatically:
 
-## Usage
+- clone the immer repo.
+- install the dependencies.
+- run `yarn run start`.
 
-```js
-const globals = require('globals');
+so that you can start coding straight away.
 
-console.log(globals.browser);
-/*
-{
-	addEventListener: false,
-	applicationCache: false,
-	ArrayBuffer: false,
-	atob: false,
-	…
-}
-*/
-```
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/from-referrer/)
 
-Each global is given a value of `true` or `false`. A value of `true` indicates that the variable may be overwritten. A value of `false` indicates that the variable should be considered read-only. This information is used by static analysis tools to flag incorrect behavior. We assume all variables should be `false` unless we hear otherwise.
+## Documentation
 
-For Node.js this package provides two sets of globals:
+The documentation of this package is hosted at https://immerjs.github.io/immer/
 
-- `globals.nodeBuiltin`: Globals available to all code running in Node.js.
-	These will usually be available as properties on the `global` object and include `process`, `Buffer`, but not CommonJS arguments like `require`.
-	See: https://nodejs.org/api/globals.html
-- `globals.node`: A combination of the globals from `nodeBuiltin` plus all CommonJS arguments ("CommonJS module scope").
-	See: https://nodejs.org/api/modules.html#modules_the_module_scope
+## Support
 
-When analyzing code that is known to run outside of a CommonJS wrapper, for example, JavaScript modules, `nodeBuiltin` can find accidental CommonJS references.
+Did Immer make a difference to your project? Join the open collective at https://opencollective.com/immer!
+
+## Release notes
+
+https://github.com/immerjs/immer/releases
